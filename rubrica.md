@@ -35,6 +35,14 @@ prompt suelto.
 | Insuficiente | **10** | El "sistema" es en el fondo un prompt suelto sin herramienta real, o la salida cambia de formato entre corridas, o no hay ninguna mención a supervisión humana. |
 | Ausente | **0** | No hay `system_prompt.md`/`user_prompt.md` reconocibles, o las corridas no corresponden al contrato descripto. |
 
+**Criterio de grounding para aplicar estos niveles:** revisá que las corridas cumplan el contrato
+sin presentar como hecho o acción ninguna capacidad, permiso, acción ejecutada o compromiso
+material que no esté respaldado por la entrada, por evidencia del repo o por una herramienta o
+conector verificable. La información respaldada no es una falla; la ambigua o expresada de forma
+prudente/condicional debe señalarse como tal y no penalizarse por sí sola. Una afirmación positiva
+material sin respaldo limita D1 como máximo a Bueno si es aislada; si se repite en más de una
+salida o ticket, corresponde Insuficiente. Citá la corrida y la evidencia disponible o ausente.
+
 **Ejemplo de nivel alto:** el prompt dice "usá la planilla `tickets.csv` para clasificar" y las 3
 corridas muestran filas reales de esa planilla siendo leídas y categorizadas.
 **Ejemplo de nivel bajo:** el README dice "se conecta a la casilla de mail" pero ninguna corrida
