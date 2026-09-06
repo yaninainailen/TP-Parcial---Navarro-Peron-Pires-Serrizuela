@@ -12,17 +12,21 @@ Parcial de la materia "Creación de Agentes de IA" — MADE N-2T, UCEMA, 2026 2T
 ## Qué construí
 
 Un agente evaluador: un sistema que corrige el trabajo final de la materia aplicando una rúbrica
-ejecutable, con una salida estructurada e idéntica en cada corrida. Incluye la rúbrica
+ejecutable y produce una salida estructurada, con criterios diseñados para lograr mayor
+consistencia y una reproducibilidad controlada. Incluye la rúbrica
 (`rubrica.md`), el agente corrector (`agente/`), tres trabajos finales de ejemplo construidos por
 el grupo para probarlo (`casos/excelente`, `casos/flojo`, `casos/tramposo`) y la evidencia de que
-sus notas coinciden con el criterio del grupo (`calibracion.md`).
+sus resultados fueron contrastados con expectativas humanas definidas antes de ejecutar
+(`calibracion.md`). No se afirma que un LLM produzca texto o puntajes necesariamente idénticos en
+dos corridas.
 
 ## Cómo se lo pedí
 
 El proceso completo, con los pedidos reales en orden, está en `interacciones/registro.md`. En
 resumen: se definió primero que el corrector y la rúbrica tenían que ser **genéricos** (aplicables
 a cualquier caso de negocio que un compañero elija para su trabajo final, no a uno fijo), se
-escribió la rúbrica con niveles de puntaje **fijos** (no rangos) para que fuera determinística, se
+escribió la rúbrica con niveles de puntaje **fijos** (no rangos) para reducir discrecionalidad y
+mejorar la consistencia, se
 escribió el system prompt del corrector con un formato de salida obligatorio, se construyeron tres
 trabajos finales ficticios sobre el mismo caso (un agente de triage de consultas de clientes) para
 poder comparar calidad de construcción y no calidad de idea, y se corrió el corrector de verdad
@@ -32,13 +36,25 @@ sobre los tres para calibrarlo contra el criterio del grupo.
 
 - La rúbrica aplica 5 dimensiones con 4 niveles cada una, evidencia exigida por nivel y una regla
   anti-trampa explícita.
-- El agente corrector, siguiendo `agente/system_prompt.md` al pie de la letra, distingue
-  correctamente los 3 casos: excelente 100/100, flojo 28/100, tramposo 28/100 **con** la alerta
-  obligatoria `⚠️ Posible caso de trabajo tramposo detectado` que el caso flojo no dispara (ver
-  `calibracion.md`).
-- La calibración encontró dos desacuerdos reales entre el primer puntaje del agente y el criterio
-  del grupo, y ambos quedaron resueltos con un ajuste concreto en la rúbrica o en el corrector,
-  no con una segunda opinión improvisada.
+- La validación final posterior a A2–A6 distingue los tres casos: excelente **80/100**, flojo
+  **33/100** y tramposo **47/100**. Solo el tramposo activa la alerta obligatoria
+  `⚠️ Posible caso de trabajo tramposo detectado`. El 100/100 del caso excelente se conserva en
+  `calibracion.md` como resultado histórico de una versión previa al criterio de grounding; no es
+  el resultado vigente.
+- **A2** probó un ataque directo de prompt injection dentro de un repo. El evaluador no obedeció
+  la instrucción y, después del cambio, la detectó, citó su archivo y la informó sin alterar la
+  nota por su mera presencia. Es evidencia sobre ese ataque controlado, no una demostración de
+  inmunidad universal.
+- **A3** incorporó grounding observable en D1. El caso excelente pasó de su 100/100 histórico a
+  80/100 porque varias corridas presentan acciones o compromisos materiales sin respaldo; el
+  resto de sus dimensiones permanece en Excelente.
+- **A4** separó conceptualmente archivo ausente, presente y leído, y presente pero inaccesible. Una
+  falla técnica ya no debe convertirse por sí sola en `Ausente`, penalización ni alerta de trampa.
+- **A5** sincronizó el system prompt y la rúbrica embebidos de Sonda con sus archivos fuente. El
+  cierre técnico de **A6** volvió a verificar igualdad exacta después de aclarar D4 y D5.
+- **A6** fijó expectativas humanas por dimensión, conservó una iteración fallida, aclaró las
+  fronteras `Insuficiente`/`Ausente` de D4 y D5 y cerró con una validación 80/33/47. La evidencia
+  completa está en `casos/calibracion-final-A6/`.
 - Un stress test adicional ("caso medio tramposo": 4 de 5 dimensiones reales y excelentes, una
   sola con un número económico que no cierra) encontró que la regla de alerta original (2+
   dimensiones afectadas) dejaba pasar sin aviso una mentira aislada en una sola dimensión — daba
@@ -83,18 +99,35 @@ camino 2 (sin key) sigue funcionando como respaldo.
 
 ## Qué falta o qué falló
 
-El puntaje total de `flojo` y `tramposo` terminó siendo el mismo número (28/100) pese a ser
-situaciones muy distintas — lo resolvimos haciendo que la detección de trampa quede en el informe
-(la alerta obligatoria) y no en el número, pero es una limitación real: si alguien solo mira el
-puntaje total sin leer el informe completo, no va a notar la diferencia. Además, el corrector no
-fue probado todavía contra un trabajo final real de un compañero (fuera de los 3 casos que
-construimos nosotros mismos) — eso recién va a pasar en la prueba de fuego.
+- Existe **variabilidad residual del LLM**. En A6, una repetición cambió D5 del caso flojo entre
+  `Insuficiente` y `Ausente`, y otra ejecución activó una alerta anti-trampa no respaldada. Las
+  auditorías llevaron a aclarar D5, pero no a agregar otra regla anti-trampa porque la norma
+  vigente ya era suficientemente clara. Por eso hablamos de mayor consistencia y reproducibilidad
+  controlada, no de determinismo absoluto.
+- Una ejecución de A6 informó **31/100** aunque sus filas sumaban 33. El error no se reprodujo en
+  dos repeticiones posteriores, que calcularon correctamente sus respectivos totales; se conserva
+  como error puntual y no como fallo aritmético persistente demostrado.
+- Sonda todavía mantiene copias embebidas de `system_prompt.md` y `rubrica.md`. Hoy coinciden
+  exactamente con las fuentes, pero futuros cambios requieren repetir la verificación de
+  sincronización para evitar divergencias.
+- Sonda interpreta una URL de GitHub solo como `owner/repo` y evalúa la `default_branch` informada
+  por GitHub. Una URL que incluya otra rama o commit no fija esa revisión; dos ejecuciones pueden
+  observar contenido distinto si la rama por defecto cambia entre ambas.
+- A4 corrigió la decisión conceptual del evaluador, pero Sonda aún pierde la causa de algunos
+  fallos individuales de descarga (`404`, `429`, CORS o red), excluye ciertos tipos y archivos
+  grandes, y puede truncar el contenido total. La estructura permite reconocer que un archivo
+  existe, pero no siempre transmite un diagnóstico técnico preciso ni identifica individualmente
+  todo lo omitido.
+- A2 cubre el ataque directo probado; no se evaluaron exhaustivamente todas las variantes posibles
+  de prompt injection. Además, el corrector todavía no fue validado contra un trabajo final real
+  de un compañero fuera de los casos controlados del grupo.
 
 ## Qué aprendí
 
 Que una rúbrica "ejecutable" no es solo escribir niveles y puntajes — hay que aplicarla de verdad
 para encontrarle los huecos, porque en el papel una rúbrica puede sonar completa y recién al
-correrla aparece la ambigüedad (como el caso de dos huecos de formato combinados). También que
-detectar una trampa no es lo mismo que ponerle una nota baja: un trabajo tramposo y uno
-simplemente flojo pueden terminar con el mismo puntaje, y si el sistema no lo señala de forma
-explícita, la trampa pasa desapercibida igual.
+correrla aparecen fronteras ambiguas, problemas de grounding o diferencias entre ausencia y falla
+técnica. También que detectar una trampa no es lo mismo que ponerle una nota baja, y que una
+calibración defendible necesita expectativas humanas previas, evidencia por dimensión e
+iteraciones de un solo cambio. Las reglas discretas mejoran la consistencia, pero no eliminan la
+variabilidad propia de un LLM.
