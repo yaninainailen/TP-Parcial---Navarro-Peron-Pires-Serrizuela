@@ -382,6 +382,40 @@ Las diferencias del tramposo elevan el total respecto de la expectativa primaria
 la conclusión evaluativa central y corresponden a límites interpretativos declarados antes o ya
 documentados. No se ajustó la expectativa después de ver la salida para fabricar coincidencia.
 
+## Prueba externa real — Contrato-Agente-Vaquillonas
+
+Después de la calibración controlada, Sonda v0.2 se ejecutó sobre el repositorio real externo
+[`Contrato-Agente-Vaquillonas`](https://github.com/pireseber-lang/Contrato-Agente-Vaquillonas)
+mediante el camino `Un solo repo de GitHub` y el modo `Sin API · Prompt Validador`; el prompt
+generado se procesó en un LLM externo.
+
+El repositorio corresponde a una consigna anterior de la materia y no fue construido para cumplir
+la estructura ni los criterios de la rúbrica actual. Por eso el resultado no representa una
+recalificación académica del trabajo original.
+
+| Dimensión | Nivel | Puntaje |
+|---|---|---:|
+| D1 · Sistema completo y funcionando | Insuficiente | 10/30 |
+| D2 · Proceso documentado | Ausente | 0/25 |
+| D3 · Formato y reproducibilidad | Insuficiente | 5/15 |
+| D4 · Análisis económico | Ausente | 0/15 |
+| D5 · Gobierno y riesgo | Ausente | 0/15 |
+| **Total** |  | **15/100** |
+
+No se activó la alerta anti-trampa. El evaluador pudo procesar el repositorio, aplicó las
+exigencias estructurales —incluida la ubicación obligatoria de `DECISIONES.md`, `prompts/` y
+`corridas/`— y trató las diferencias como carencias respecto de la rúbrica, no como manipulación.
+La sugerencia final fue coherente con ese diagnóstico: reorganizar los prompts y corridas, agregar
+fechas y trasladar el proceso documentado a `DECISIONES.md` sin rehacer el agente.
+
+Metodológicamente, esta ejecución aporta evidencia adicional de funcionamiento sobre un repo real
+externo a los fixtures controlados. Una sola prueba sobre una consigna anterior no demuestra
+validez general, robustez total ni repetibilidad estadística, y no reemplaza la validación aún
+pendiente sobre un trabajo final real construido específicamente para la rúbrica vigente.
+
+La documentación y la respuesta completa sin correcciones manuales están en
+`casos/prueba-externa-real/Contrato-Agente-Vaquillonas/`.
+
 ## Conclusión y límites
 
 **Diagnóstico final: A) CONFIGURACIÓN FINAL ACEPTABLE.**

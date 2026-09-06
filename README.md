@@ -55,6 +55,13 @@ sobre los tres para calibrarlo contra el criterio del grupo.
 - **A6** fijó expectativas humanas por dimensión, conservó una iteración fallida, aclaró las
   fronteras `Insuficiente`/`Ausente` de D4 y D5 y cerró con una validación 80/33/47. La evidencia
   completa está en `casos/calibracion-final-A6/`.
+- Como prueba externa adicional, Sonda v0.2 evaluó
+  [`Contrato-Agente-Vaquillonas`](https://github.com/pireseber-lang/Contrato-Agente-Vaquillonas),
+  un repositorio real creado para una consigna anterior y no para cumplir la rúbrica actual. Dio
+  **15/100**, sin alerta anti-trampa: procesó el repo, aplicó las exigencias estructurales y separó
+  carencias de manipulación. El resultado no es una recalificación académica del trabajo original
+  ni demuestra validez general; la evidencia está en
+  `casos/prueba-externa-real/Contrato-Agente-Vaquillonas/`.
 - Un stress test adicional ("caso medio tramposo": 4 de 5 dimensiones reales y excelentes, una
   sola con un número económico que no cierra) encontró que la regla de alerta original (2+
   dimensiones afectadas) dejaba pasar sin aviso una mentira aislada en una sola dimensión — daba
@@ -119,8 +126,9 @@ camino 2 (sin key) sigue funcionando como respaldo.
   existe, pero no siempre transmite un diagnóstico técnico preciso ni identifica individualmente
   todo lo omitido.
 - A2 cubre el ataque directo probado; no se evaluaron exhaustivamente todas las variantes posibles
-  de prompt injection. Además, el corrector todavía no fue validado contra un trabajo final real
-  de un compañero fuera de los casos controlados del grupo.
+  de prompt injection. La prueba sobre `Contrato-Agente-Vaquillonas` aporta evidencia sobre un
+  repositorio real externo, pero todavía falta validar el corrector sobre un trabajo final real
+  construido específicamente para la consigna y la rúbrica vigentes.
 
 ## Qué aprendí
 
