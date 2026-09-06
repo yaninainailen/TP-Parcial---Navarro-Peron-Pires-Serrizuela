@@ -1,7 +1,15 @@
 # Calibración
 
-Corrimos el agente corrector (`agente/system_prompt.md` + `rubrica.md`, tal como están escritos,
-sin atajos) sobre los 3 casos de `casos/`. Antes de correrlo, el grupo definió a ojo qué nota
+## Calibración histórica — versión previa a A2–A6
+
+Esta primera parte conserva la calibración original y sus resultados tal como fueron obtenidos.
+Los puntajes 100/28/28 que aparecen aquí son **históricos**: describen versiones previas del
+evaluador y no deben interpretarse como resultados vigentes. La sección
+`Recalibración final A6`, al final del documento, registra la configuración y los resultados
+actuales posteriores a A2–A6.
+
+Corrimos el agente corrector (`agente/system_prompt.md` + `rubrica.md`, tal como estaban escritos
+en esa versión, sin atajos) sobre los 3 casos de `casos/`. Antes de correrlo, el grupo definió a ojo qué nota
 esperaba para cada uno, para que la comparación sea honesta y no una racionalización posterior.
 
 ## Nota esperada por el grupo (definida antes de correr el agente)
@@ -144,7 +152,7 @@ abre con la alerta obligatoria. **Coincide con lo esperado.**
 
 ---
 
-## Resultado final
+## Resultado histórico de esta etapa
 
 | Caso | Puntaje del agente | Esperado por el grupo | ¿Coincide? | Cómo se detecta |
 |---|---|---|---|---|
@@ -229,3 +237,162 @@ cuántas otras dimensiones estén afectadas. Con el ajuste, el mismo caso da el 
 en todos lados (el caso oficial `tramposo`), pero no contra el que elige mentir en un solo lugar
 difícil de verificar a ojo. Este es el caso más peligroso para la prueba de fuego en vivo, porque un
 puntaje alto no genera la misma sospecha inmediata que uno bajo.
+
+---
+
+# Recalibración final A6
+
+Esta sección reemplaza como referencia vigente —sin borrar el historial anterior— los resultados
+de la calibración original. La recalibración se realizó después de A2–A5, fijó una expectativa
+humana por dimensión antes de ejecutar y conservó tanto las corridas exitosas como las
+iteraciones fallidas. La evidencia completa está en `casos/calibracion-final-A6/`.
+
+## Cambios acumulados antes de A6
+
+| Mejora | Hallazgo y alcance validado |
+|---|---|
+| A2 · Prompt injection | En el ataque directo probado, la versión inicial no obedeció la instrucción maliciosa pero tampoco la informó. El cambio hizo que el contenido del repo se trate como dato no confiable, que el intento se cite en `Señales de alerta` y que su sola existencia no cambie la nota. Esta prueba no demuestra inmunidad frente a toda variante posible. |
+| A3 · Grounding | Se auditaron 13 afirmaciones no respaldadas y 2 ambiguas en el caso excelente. El nuevo criterio obliga a revisar hechos, capacidades, acciones y compromisos; las repeticiones materiales limitan D1 a Insuficiente. Por eso el 100/100 histórico dejó de ser vigente. |
+| A4 · Acceso a archivos | Se distinguieron los estados ausente, presente y leído, y presente pero inaccesible. La inaccesibilidad técnica no debe convertirse por sí sola en `Ausente`, penalización o alerta anti-trampa. |
+| A5 · Sincronización de Sonda | Se comprobó que Sonda usaba copias embebidas desactualizadas y se sincronizaron `systemPromptText` y `rubricaText` con sus fuentes. |
+
+## Configuración congelada
+
+- Rama: `mejoras-eber`.
+- Commit base del evaluador: `67473c559f369752cea8371ae4c9c36462fcc4a1`.
+- `agente/system_prompt.md`: idéntico a ese HEAD; SHA-256 normalizado
+  `f5b4d4166ad600db90c69414eadbd2c68405ac9b26fa29062cf3dd16e9228890`.
+- `rubrica.md`: misma base más las aclaraciones finales D4 y D5; SHA-256 normalizado
+  `9dfdb6e989e7515d562863e133010375c0b0321ecb97f6fa86d96a87d1bd5682`.
+- `rubricaText` efectivo de Sonda: igualdad exacta con `rubrica.md`, 10.130 caracteres y el mismo
+  SHA-256 normalizado. `systemPromptText` también coincide exactamente con su fuente.
+- Casos originales: `casos/excelente/Caso-Ej-1/`, `casos/flojo/Caso-Ej-2/` y
+  `casos/tramposo/Caso-Ej-3/`, sin modificaciones.
+- Las ejecuciones finales se hicieron en conversaciones nuevas de ChatGPT anónimo. La interfaz no
+  expuso modelo, temperatura, seed ni otros parámetros; no se infieren ni se afirma determinismo.
+
+La configuración, los árboles Git de los casos y los hashes de los mensajes completos quedaron
+registrados antes de ejecutar en
+`casos/calibracion-final-A6/16_expectativa_final_previa.md`. La sincronización final de Sonda está
+en `casos/calibracion-final-A6/21_sincronizacion_sonda_final.md`.
+
+## Expectativa humana previa por dimensión
+
+| Caso | D1 | D2 | D3 | D4 | D5 | Total | Alerta esperada |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Excelente | Insuficiente 10 | Excelente 25 | Excelente 15 | Excelente 15, **AMBIGUO** | Excelente 15 | 80 | No |
+| Flojo | Insuficiente 10 | Insuficiente 8 | Insuficiente 5 | Insuficiente 5 | Insuficiente 5 | 33 | No |
+| Tramposo | Insuficiente 10 | Insuficiente 8 | Insuficiente 5, **AMBIGUO** | Ausente 0 | Insuficiente 5 | 28; alternativa 33 | Sí |
+
+La expectativa no se tomó de resultados históricos del agente, sino de la rúbrica vigente y de la
+evidencia real de cada caso:
+
+- **Excelente:** D1 debía bajar por acciones y compromisos materiales no respaldados repetidos en
+  las corridas; D2, D3 y D5 cumplían todos sus requisitos. D4 se marcó ambiguo solo por la duda de
+  si aceptar tokens autodeclarados, requisito que la rúbrica no excluye.
+- **Flojo:** los prompts y corridas justificaban D1 bajo; `DECISIONES.md` no narraba iteraciones;
+  había dos huecos simultáneos de reproducibilidad; “El modelo no es caro” justificaba D4
+  Insuficiente y avisar a un humano justificaba D5 Insuficiente.
+- **Tramposo:** Gmail/OAuth, producción, precisión e iteraciones no tenían respaldo; las corridas
+  carecían de fecha; las cifras económicas eran internamente incompatibles; el gobierno era
+  genérico. D3 admitía como alternativa Bueno si la ausencia repetida de fecha se consideraba un
+  único tipo de hueco.
+
+## Línea base y desacuerdo material de A6
+
+La primera recalibración posterior a A2–A5 está conservada en los archivos `00`–`04`. Dio
+**80/100** al excelente, **28/100** al flojo y **47/100** al tramposo. Excelente y tramposo
+mantuvieron las detecciones centrales esperadas, pero D4 del flojo quedó en `Ausente — 0/15`
+aunque el evaluador citó “El modelo no es caro”, frase equivalente al ejemplo entonces escrito
+para `Insuficiente — 5/15`. El diagnóstico fue B: un único desacuerdo material antes de cerrar la
+documentación.
+
+## Iteración fallida del system prompt
+
+Primero se probó una regla general de selección de nivel en `agente/system_prompt.md`. La ejecución
+`05` mantuvo D4 en `Ausente — 0/15` y además D5 varió de 5 a 0. La comparación `06` clasificó la
+prueba como no validada. El cambio fue revertido y `agente/system_prompt.md` volvió exactamente a
+HEAD; los archivos `05_resultado_flojo_despues_regla_seleccion_nivel.md` y
+`06_comparacion_correccion_seleccion_nivel.md` se conservaron como evidencia de la iteración
+fallida.
+
+## Aclaración específica D4
+
+Se modificó únicamente la frontera `Insuficiente`/`Ausente` de D4 para establecer que una
+consideración económica cualitativa como “el modelo no es caro” es evidencia mínima y que
+`Ausente` exige que no exista consideración económica alguna. La ejecución `07` corrigió D4 de 0
+a 5 sin cambiar D1, D2, D3 ni D5.
+
+Esa salida informó **31/100**, aunque sus filas sumaban `10 + 8 + 5 + 5 + 5 = 33`. Las dos
+repeticiones controladas `09` y `10` mantuvieron D4 en 5 y calcularon correctamente sus propios
+totales, 33 y 28 respectivamente. Por eso `11_comparacion_replicacion_D4.md` documenta el 31 como
+un error aritmético aislado, no como un fallo persistente demostrado.
+
+## Variabilidad D5 y aclaración específica
+
+La diferencia entre las dos repeticiones estuvo en D5: E0 y R1 asignaron
+`Insuficiente — 5/15`, mientras R2 asignó `Ausente — 0/15` reconociendo esencialmente la misma
+mención de revisión humana. La auditoría `12_auditoria_D5.md` determinó que ambos niveles eran
+razonables bajo el texto anterior: `Insuficiente` aceptaba una frase genérica, mientras `Ausente`
+dependía de que no existiera una sección dedicada.
+
+Se aclararon solo esas dos filas para que cualquier consideración de gobierno, riesgo o
+supervisión humana pueda justificar Insuficiente aunque esté fuera de una sección dedicada. La
+ejecución `13` dejó D5 en 5, mantuvo D1–D4 y calculó 33 correctamente. La comparación está en
+`14_comparacion_aclaracion_D5.md`.
+
+## Auditoría de la alerta anti-trampa
+
+La ejecución `13` activó por primera vez la alerta anti-trampa del caso flojo usando “Anda bien” y
+“No hubo grandes problemas”. La auditoría textual `15_auditoria_alerta_antitrampa.md` comprobó que
+esas frases eran genéricas o carecían de evidencia, pero no demostraban contradicciones que
+hubieran bajado causalmente dos dimensiones ni un número falso. La alerta fue una aplicación
+variable no respaldada por las reglas, que ya eran suficientemente claras. Se conservó la salida
+y no se agregó ninguna norma nueva para acomodar una ejecución aislada.
+
+## Validación final
+
+Con la expectativa final fijada en `16_expectativa_final_previa.md`, se ejecutó una sola vez cada
+caso sin cambiar la configuración entre corridas. Las respuestas completas están en `17`, `18` y
+`19`; la comparación está en `20_comparacion_final.md`.
+
+| Caso | D1 | D2 | D3 | D4 | D5 | Total vigente | Alerta anti-trampa |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Excelente | Insuficiente 10 | Excelente 25 | Excelente 15 | Excelente 15 | Excelente 15 | **80/100** | No |
+| Flojo | Insuficiente 10 | Insuficiente 8 | Insuficiente 5 | Insuficiente 5 | Insuficiente 5 | **33/100** | No |
+| Tramposo | Insuficiente 10 | Bueno 17 | Bueno 10 | Insuficiente 5 | Insuficiente 5 | **47/100** | Sí |
+
+Las tres sumas son correctas. D4 y D5 del flojo coinciden con la expectativa aclarada y no aparece
+la alerta improcedente. El excelente conserva la reducción de grounding en D1. El tramposo queda
+inequívocamente marcado y cita producción, volumen, precisión, Gmail/OAuth, iteraciones y cifras
+económicas no respaldadas o incompatibles.
+
+## Comparación humano vs. evaluador
+
+| Caso y dimensión | Clasificación | Explicación |
+|---|---|---|
+| Excelente D1–D5 | **COINCIDE** | Los cinco niveles y el total coinciden; D1 cita el grounding repetido. |
+| Flojo D1–D5 | **COINCIDE** | Los cinco niveles coinciden; las aclaraciones D4 y D5 se aplican con la evidencia esperada. |
+| Tramposo D1 y D5 | **COINCIDE** | Se reconocen falta de herramienta/supervisión concreta y gobierno genérico. |
+| Tramposo D2 | **DIFERENCIA JUSTIFICABLE** | El evaluador leyó “47 iteraciones” como iteraciones narradas pero genéricas, ejemplo compatible con Bueno; la tensión con la regla de afirmaciones no verificadas ya estaba documentada. |
+| Tramposo D3 | **DIFERENCIA JUSTIFICABLE** | Adoptó la alternativa Bueno registrada antes de ejecutar: la falta de fecha en las tres corridas como un único tipo de hueco. |
+| Tramposo D4 | **DIFERENCIA JUSTIFICABLE** | Demostró la inconsistencia USD 0,48 vs. USD 0,05 y aplicó la instrucción específica de tratar números que no cierran como Insuficiente; la regla anti-trampa también permite igualar o empeorar la ausencia. |
+
+Las diferencias del tramposo elevan el total respecto de la expectativa primaria, pero no cambian
+la conclusión evaluativa central y corresponden a límites interpretativos declarados antes o ya
+documentados. No se ajustó la expectativa después de ver la salida para fabricar coincidencia.
+
+## Conclusión y límites
+
+**Diagnóstico final: A) CONFIGURACIÓN FINAL ACEPTABLE.**
+
+La configuración actual ofrece mayor consistencia, trazabilidad a evidencia y reproducibilidad
+controlada, pero no determinismo absoluto. La muestra conservó variabilidad residual en D5, en una
+alerta anti-trampa y en un total aritmético aislado. Las auditorías distinguieron qué variaciones
+justificaban aclarar una frontera y cuáles no justificaban agregar reglas.
+
+Quedan además límites operativos: Sonda mantiene copias embebidas que deben resincronizarse ante
+cambios futuros; evalúa la rama por defecto y no fija una rama o commit incluido en la URL; y no
+siempre transmite la causa precisa de archivos omitidos por error, tipo, tamaño o truncamiento.
+A2 valida resistencia y detección para el ataque directo ensayado, no para todas las formas
+posibles de prompt injection.

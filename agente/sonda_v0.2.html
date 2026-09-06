@@ -1082,8 +1082,8 @@ Evalúa si hay números reales de costo, no una mención de que "es barato".
 |---|---|---|
 | Excelente | **15** | Costo por corrida calculado con tokens de entrada/salida **de las corridas reales del repo** · proyección de costo a escala (por semana o por año) · elección de modelo justificada explícitamente con el criterio "el modelo más chico que hace bien la tarea". |
 | Bueno | **10** | Hay números de costo pero falta la proyección a escala, o la elección de modelo no está justificada (solo se nombra el modelo usado). |
-| Insuficiente | **5** | Se menciona el costo en términos genéricos ("es muy barato correrlo") sin ningún número propio. |
-| Ausente | **0** | No hay ningún análisis económico. |
+| Insuficiente | **5** | Existe alguna consideración económica o de costo, aunque sea genérica o cualitativa ("el modelo no es caro", "es barato correrlo" o equivalente), sin números propios. |
+| Ausente | **0** | No existe ninguna consideración económica, de costo, tokens, escala o elección económica del modelo. |
 
 **Señal de alerta:** si los números de costo no cierran con la longitud real de las corridas
 mostradas (ej. dice "3 centavos por corrida" pero las corridas tienen miles de palabras de salida),
@@ -1098,8 +1098,8 @@ Evalúa si el alumno pensó en qué puede salir mal y quién responde por el res
 |---|---|---|
 | Excelente | **15** | Dice qué sistemas/datos toca el agente y con qué permisos · qué puede salir mal **y** qué pasa concretamente cuando sale mal · qué revisa un humano antes de confiar en la salida · quién firma el resultado. |
 | Bueno | **10** | Cubre la mayoría de los puntos pero de forma superficial (ej. dice qué puede salir mal pero no qué se hace al respecto). |
-| Insuficiente | **5** | Hay una mención genérica de una frase sin desarrollo ("hay que tener cuidado con los datos"). |
-| Ausente | **0** | No hay ninguna sección de gobierno o riesgo. |
+| Insuficiente | **5** | Existe alguna consideración de gobierno, riesgo o supervisión humana, aunque sea una mención genérica de una frase sin desarrollo ("hay que tener cuidado con los datos", "hay que avisar a un humano antes de enviar" o equivalente). |
+| Ausente | **0** | No existe ninguna consideración de gobierno, riesgo, permisos, manejo de errores o supervisión humana. |
 
 ---
 
