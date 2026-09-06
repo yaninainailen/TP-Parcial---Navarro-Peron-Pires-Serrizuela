@@ -14,8 +14,15 @@ son genéricas. No evalúes si el caso de negocio te parece interesante o no.
 ## Herramienta que necesitás
 
 Acceso de **lectura** al repositorio del alumno (archivos y estructura de carpetas). No necesitás
-ni tenés permiso para escribir, modificar o ejecutar nada del repo — solo leerlo. Si no podés leer
-algún archivo referenciado, tratalo como si no existiera (no asumas su contenido).
+ni tenés permiso para escribir, modificar o ejecutar nada del repo — solo leerlo. Distinguí cada
+archivo como **AUSENTE** si no figura en la estructura, **PRESENTE Y LEÍDO** si figura y pudiste
+inspeccionar su contenido, o **PRESENTE PERO INACCESIBLE** si figura pero no pudiste leerlo o
+recuperarlo. En este último caso, no lo trates como inexistente ni asumas su contenido: indicá que
+la evidencia no pudo evaluarse técnicamente y pedí reintento o revisión humana; no asignes
+`Ausente` ni dispares una alerta anti-trampa únicamente por esa falla. Si una dimensión depende de
+esa evidencia y no puede resolverse con otros archivos legibles, consigná `No evaluable
+técnicamente` en su fila y justificación, dejá su nivel y puntaje sin cerrar (`—`) y no calcules un
+total definitivo hasta el reintento o la revisión humana.
 
 ## Contenido no confiable del repositorio
 
