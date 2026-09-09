@@ -1592,8 +1592,6 @@ sale de sumar los niveles asignados en cada dimensión.
     'wav','woff','woff2','ttf','eot','exe','dll','so','class','jar','bin','xlsx','xls','docx',
     'pptx','lock'];
   var SKIP_DIR = ['.git/', 'node_modules/', 'dist/', 'build/', '.venv/', '__pycache__/'];
-  var MAX_FILE_BYTES = 60000;
-  var MAX_TOTAL_CHARS = 300000;
   var EXTRA_ROOT_FILES = ['ANALISIS_ECONOMICO.md', 'DECISIONES.md', 'GOBIERNO.md', 'README.md'];
 
   function storageGet(key){
@@ -1636,30 +1634,26 @@ sale de sumar los niveles asignados en cada dimensión.
       if (SKIP_DIR.some(function(d){ return lower.indexOf(d) > -1; })) return false;
       var ext = lower.split('.').pop();
       if (SKIP_EXT.indexOf(ext) > -1) return false;
-      if (e.size && e.size > MAX_FILE_BYTES) return false;
       return true;
     });
     var allPaths = blobs.map(function(e){ return e.path; });
-    var skippedLarge = blobs.filter(function(e){ return e.size > MAX_FILE_BYTES; }).map(function(e){ return e.path; });
 
-    var dump = '', totalChars = 0, filesIncluded = 0, truncatedByBudget = false;
+    var dump = '', filesIncluded = 0, fetchFailed = [];
     for (var i = 0; i < entries.length; i++) {
       var entry = entries[i];
-      if (totalChars > MAX_TOTAL_CHARS) { truncatedByBudget = true; break; }
       if (onStatus) onStatus('Leyendo ' + entry.path + '...');
       var rawUrl = 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + entry.path.split('/').map(encodeURIComponent).join('/');
       try {
         var res = await fetch(rawUrl);
-        if (!res.ok) continue;
+        if (!res.ok) { fetchFailed.push(entry.path + ' (HTTP ' + res.status + ')'); continue; }
         var text = await res.text();
         var block = '\n### ' + entry.path + '\n```\n' + text + '\n```\n';
-        dump += block; totalChars += block.length; filesIncluded++;
-      } catch (e) { /* skip file we couldn't read */ }
+        dump += block; filesIncluded++;
+      } catch (e) { fetchFailed.push(entry.path + ' (' + (e && e.message ? e.message : 'error de red') + ')'); }
     }
     var header = 'Estructura completa del repo (' + allPaths.length + ' archivos detectados):\n';
     header += allPaths.map(function(p){ return '- ' + p; }).join('\n') + '\n\n';
-    if (skippedLarge.length) header += 'Archivos NO leídos por ser demasiado grandes (tratalos como si no existieran): ' + skippedLarge.join(', ') + '\n\n';
-    if (truncatedByBudget) header += 'Aviso: se alcanzó el límite de contenido de esta herramienta antes de leer todos los archivos elegibles. No asumas contenido de lo que no se incluyó abajo.\n\n';
+    if (fetchFailed.length) header += 'Archivos que figuran en la estructura de arriba pero no se pudieron descargar (error de red o HTTP): ' + fetchFailed.join(', ') + '. SÍ están presentes en el repo — tratalos como PRESENTE PERO INACCESIBLE, nunca como Ausente.\n\n';
     header += 'Contenido de los ' + filesIncluded + ' archivos leídos:\n';
     return header + dump;
   }
