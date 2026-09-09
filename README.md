@@ -120,11 +120,16 @@ camino 2 (sin key) sigue funcionando como respaldo.
 - Sonda interpreta una URL de GitHub solo como `owner/repo` y evalúa la `default_branch` informada
   por GitHub. Una URL que incluya otra rama o commit no fija esa revisión; dos ejecuciones pueden
   observar contenido distinto si la rama por defecto cambia entre ambas.
-- A4 corrigió la decisión conceptual del evaluador, pero Sonda aún pierde la causa de algunos
-  fallos individuales de descarga (`404`, `429`, CORS o red), excluye ciertos tipos y archivos
-  grandes, y puede truncar el contenido total. La estructura permite reconocer que un archivo
-  existe, pero no siempre transmite un diagnóstico técnico preciso ni identifica individualmente
-  todo lo omitido.
+- A4 corrigió la decisión conceptual del evaluador. Una revisión posterior encontró que Sonda
+  igual podía perder archivos sin dejar rastro: leía el árbol del repo en el orden que devuelve
+  GitHub (sin prioridad) y cortaba al superar un tope de caracteres acumulados, así que carpetas
+  pesadas y tempranas alfabéticamente (como `corridas/`) podían agotar el presupuesto antes de
+  llegar a archivos críticos como `prompts/system_prompt.md`. Se sacaron los topes de tamaño (por
+  archivo y totales): ahora se vuelca el contenido completo de todos los archivos elegibles. Lo
+  único que puede quedar afuera es lo que falla al descargarse (`404`, red, CORS) o lo que se
+  excluye a propósito por no ser texto evaluable (binarios, `node_modules/`, etc.); en el primer
+  caso, el archivo generado ahora nombra cada uno explícitamente y aclara que hay que tratarlo
+  como `PRESENTE PERO INACCESIBLE`, nunca como `Ausente`.
 - A2 cubre el ataque directo probado; no se evaluaron exhaustivamente todas las variantes posibles
   de prompt injection. La prueba sobre `Contrato-Agente-Vaquillonas` aporta evidencia sobre un
   repositorio real externo, pero todavía falta validar el corrector sobre un trabajo final real
