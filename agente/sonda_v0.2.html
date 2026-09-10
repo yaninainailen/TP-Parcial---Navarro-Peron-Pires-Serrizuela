@@ -206,7 +206,6 @@
     color:var(--accent-strong);
     border-color:transparent;
   }
-  .crumb-sep{ color:var(--text-faint); font-size:0.8rem; }
   .btn-reset{
     margin-left:auto;
     background:none;
@@ -396,32 +395,6 @@
   }
   .hint-ok{ color:var(--success); }
   .hint-err{ color:var(--danger); }
-
-  .file-drop{
-    display:flex;
-    align-items:center;
-    gap:0.85rem;
-    border:1.5px dashed var(--border-strong);
-    border-radius:10px;
-    padding:0.85rem 1rem;
-    cursor:pointer;
-    background:var(--bg);
-    transition:border-color 0.15s ease, background 0.15s ease;
-  }
-  .file-drop:hover{ border-color:var(--accent); }
-  .file-drop.is-valid{ border-color:var(--success); border-style:solid; }
-  .file-drop.is-invalid{ border-color:var(--danger); border-style:solid; }
-  .file-drop-icon{
-    width:32px; height:32px; flex:none;
-    border-radius:8px;
-    background:var(--surface-2);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--text-soft);
-  }
-  .file-drop-icon svg{ width:16px; height:16px; }
-  .file-drop-text{ font-size:0.85rem; color:var(--text-soft); }
-  .file-drop-text strong{ color:var(--text); font-weight:600; }
-  input[type="file"]{ display:none; }
 
   .actions{
     display:flex;
@@ -622,6 +595,61 @@
     color:var(--text-faint);
     font-family:var(--font-mono);
   }
+
+  /* ---------- confirm-before-send modal (Opción A) ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,20,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1.25rem;
+    z-index:100;
+  }
+  .modal-box{
+    width:100%;
+    max-width:420px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:1.5rem 1.5rem 1.6rem;
+    box-shadow:var(--shadow);
+  }
+  .modal-title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.15rem;
+    margin:0 0 1rem;
+  }
+  .modal-details{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:0.5rem 1rem;
+    margin:0 0 1.4rem;
+  }
+  .modal-details dt{
+    font-family:var(--font-mono);
+    font-size:0.7rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    white-space:nowrap;
+    padding-top:0.15rem;
+  }
+  .modal-details dd{
+    margin:0;
+    font-size:0.9rem;
+    color:var(--text);
+    line-height:1.45;
+    word-break:break-word;
+  }
+  .modal-actions{
+    display:flex;
+    gap:0.65rem;
+    flex-wrap:wrap;
+  }
+  .modal-actions .btn{ flex:1; }
 </style>
 </head>
 <body>
@@ -649,52 +677,28 @@
   <section class="step" id="step1">
     <p class="step-label" id="step1Label"></p>
     <div class="tiles">
-      <button type="button" class="tile" id="tile-1a" data-path1="A">
-        <div class="tile-top">
-          <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.93-1.93a5 5 0 0 0-7.07-7.07L10.5 5.5"></path><path d="M14 11a5 5 0 0 0-7.07 0L5 12.93a5 5 0 0 0 7.07 7.07L13.5 18.5"></path></svg></span>
-          <span class="tile-check" aria-hidden="true"></span>
-        </div>
-        <span class="tile-tag" id="tile1aTag"></span>
-        <span class="tile-title" id="tile1aTitle"></span>
-        <p class="tile-desc" id="tile1aDesc"></p>
-      </button>
-      <button type="button" class="tile" id="tile-1b" data-path1="B">
-        <div class="tile-top">
-          <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>
-          <span class="tile-check" aria-hidden="true"></span>
-        </div>
-        <span class="tile-tag" id="tile1bTag"></span>
-        <span class="tile-title" id="tile1bTitle"></span>
-        <p class="tile-desc" id="tile1bDesc"></p>
-      </button>
-    </div>
-  </section>
-
-  <section class="step" id="step2" hidden>
-    <p class="step-label" id="step2Label"></p>
-    <div class="tiles">
-      <button type="button" class="tile" id="tile-1aa" data-path2="A">
+      <button type="button" class="tile" id="tile-a" data-path="A">
         <div class="tile-top">
           <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3-3.5 3.5zm-2 2l1.5 1.5"></path></svg></span>
           <span class="tile-check" aria-hidden="true"></span>
         </div>
-        <span class="tile-tag" id="tile1aaTag"></span>
-        <span class="tile-title" id="tile1aaTitle"></span>
-        <p class="tile-desc" id="tile1aaDesc"></p>
+        <span class="tile-tag" id="tileATag"></span>
+        <span class="tile-title" id="tileATitle"></span>
+        <p class="tile-desc" id="tileADesc"></p>
       </button>
-      <button type="button" class="tile" id="tile-1ab" data-path2="B">
+      <button type="button" class="tile" id="tile-b" data-path="B">
         <div class="tile-top">
           <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path></svg></span>
           <span class="tile-check" aria-hidden="true"></span>
         </div>
-        <span class="tile-tag" id="tile1abTag"></span>
-        <span class="tile-title" id="tile1abTitle"></span>
-        <p class="tile-desc" id="tile1abDesc"></p>
+        <span class="tile-tag" id="tileBTag"></span>
+        <span class="tile-title" id="tileBTitle"></span>
+        <p class="tile-desc" id="tileBDesc"></p>
       </button>
     </div>
   </section>
 
-  <!-- Panel 1A-A: API de Claude, URL única -->
+  <!-- Panel Opción A: API de Claude, URL única -->
   <section class="panel" id="panel-1aa" hidden>
     <div class="panel-head">
       <span class="panel-title" id="panelAATitle"></span>
@@ -758,7 +762,7 @@
     </div>
   </section>
 
-  <!-- Panel 1A-B: Prompt Validador, sin API -->
+  <!-- Panel Opción B: Prompt Validador, sin API -->
   <section class="panel" id="panel-1ab" hidden>
     <div class="panel-head">
       <span class="panel-title" id="panelABTitle"></span>
@@ -787,73 +791,26 @@
     </div>
   </section>
 
-  <!-- Panel 1B: lista de direcciones -->
-  <section class="panel" id="panel-1b" hidden>
-    <div class="panel-head">
-      <span class="panel-title" id="panelBTitle"></span>
-      <span class="panel-note" id="panelBNote"></span>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span id="labelBFile"></span><span class="field-status" id="status-b-file"></span></div>
-      <div class="file-drop" id="b-filedrop" tabindex="0" role="button" aria-controls="b-file">
-        <span class="file-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg></span>
-        <span class="file-drop-text" id="b-filedrop-text"></span>
-      </div>
-      <input type="file" id="b-file" accept=".csv,text/csv">
-      <p class="hint" id="hint-b-file"></p>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span id="labelBKey"></span><span class="field-status" id="status-b-key"></span></div>
-      <input type="password" id="b-key">
-      <p class="hint" id="hint-b-key"></p>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span id="labelBWs"></span><span class="field-status" id="status-b-ws"></span></div>
-      <input type="text" id="b-ws">
-      <p class="hint" id="hint-b-ws"></p>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span id="labelBModel"></span></div>
-      <select id="b-model">
-        <option value="claude-opus-5">Claude Opus 5 — $5 / $25 por MTok (in/out)</option>
-        <option value="claude-sonnet-5">Claude Sonnet 5 — $2 / $10 por MTok (in/out)</option>
-        <option value="claude-haiku-4-5">Claude Haiku 4.5 — $1 / $5 por MTok (in/out)</option>
-      </select>
-    </div>
-
-    <div class="actions">
-      <button type="button" class="btn btn-primary" id="btn-b" disabled></button>
-    </div>
-
-    <ol class="steps" id="b-steps" hidden></ol>
-    <p class="result-hint" id="b-status"></p>
-    <div class="error-panel" id="b-error" hidden>
-      <div class="error-head">
-        <span class="error-icon" aria-hidden="true">⚠</span>
-        <span class="error-title" id="b-error-title"></span>
-      </div>
-      <dl class="error-details">
-        <dt id="bErrStepLabel"></dt><dd id="b-error-step"></dd>
-        <dt id="bErrTimeLabel"></dt><dd id="b-error-time"></dd>
-        <dt id="bErrMsgLabel"></dt><dd class="mono" id="b-error-message"></dd>
-        <dt id="bErrHintLabel"></dt><dd id="b-error-hint"></dd>
-      </dl>
-    </div>
-    <div class="result" id="b-result" hidden>
-      <div class="result-label"><span id="bResultLabel"></span></div>
-      <textarea class="prompt-box" id="b-output" style="min-height:16rem" readonly></textarea>
-    </div>
-  </section>
-
   <footer>
     <span id="footerLeft"></span>
     <span id="footerVersion"></span>
   </footer>
 
+</div>
+
+<div class="modal-overlay" id="confirmOverlay" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <h2 class="modal-title" id="confirmTitle"></h2>
+    <dl class="modal-details">
+      <dt id="confirmRepoLabel"></dt><dd id="confirmRepoValue"></dd>
+      <dt id="confirmWordsLabel"></dt><dd id="confirmWordsValue"></dd>
+      <dt id="confirmTokensLabel"></dt><dd id="confirmTokensValue"></dd>
+    </dl>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" id="btn-confirm-stop"></button>
+      <button type="button" class="btn btn-primary" id="btn-confirm-continue"></button>
+    </div>
+  </div>
 </div>
 
 <script type="text/plain" id="systemPromptText">
@@ -1169,12 +1126,8 @@ sale de sumar los niveles asignados en cada dimensión.
     hero: {
       eyebrow: 'Agente Evaluador UCEMA',
       start: {
-        title: 'Elegí cómo vas a analizar los repos',
-        sub: 'Trabajá con un unico repo a analizar o subí un listado completo de repos. Sonda arma el proceso completo según lo que necesites validar.'
-      },
-      chooseMethod: {
-        title: 'Una dirección, dos formas de validarla',
-        sub: 'Elegí si Sonda va a llamar directamente a la API de Claude o si preferís generar un prompt para pegar en un LLM externo.'
+        title: 'Elegí cómo vas a validar el repo',
+        sub: 'Sonda puede llamar directamente a la API de Claude o generar un prompt para pegar en tu LLM externo de preferencia.'
       },
       apiMode: {
         title: 'Completá los datos de conexión',
@@ -1183,34 +1136,17 @@ sale de sumar los niveles asignados en cada dimensión.
       promptMode: {
         title: 'Generá tu Prompt Validador',
         sub: 'Cargá la dirección, creá el prompt y copialo para pegarlo en tu LLM externo de preferencia.'
-      },
-      listMode: {
-        title: 'Subí tu lista de direcciones',
-        sub: 'El CSV debe tener dos columnas: dirección web y nombre o titular del sitio.'
       }
     },
     step1: {
-      label: 'Paso 1 · ¿Qué vas a analizar?',
+      label: 'Paso 1 · ¿Cómo querés validar el repo?',
       tileA: {
-        tag: 'OPCIÓN 1A',
-        title: 'Un solo repo de GitHub',
-        desc: 'Cargá una única URL para analizar el repo en profundidad.'
-      },
-      tileB: {
-        tag: 'OPCIÓN 1B',
-        title: 'Una lista de repos de GitHub',
-        desc: 'Subí un CSV con muchas URLs de repos para procesarlos en lote.'
-      }
-    },
-    step2: {
-      label: 'Paso 2 · ¿Cómo querés validar esa dirección?',
-      tileAA: {
-        tag: 'OPCIÓN 1A-A',
+        tag: 'OPCIÓN A',
         title: 'Con API de Claude',
         desc: 'Sonda llama a la API directamente con tus credenciales.'
       },
-      tileAB: {
-        tag: 'OPCIÓN 1A-B',
+      tileB: {
+        tag: 'OPCIÓN B',
         title: 'Sin API · Prompt Validador',
         desc: 'Generá un prompt para pegar en un LLM externo, sin usar la API.'
       }
@@ -1236,22 +1172,15 @@ sale de sumar los niveles asignados en cada dimensión.
       copyFlag: 'Copiado ✓',
       resultHint: 'Pegá este texto en tu LLM externo de preferencia para ejecutar la validación.'
     },
-    panelB: {
-      title: 'Conexión con la API de Claude',
-      note: 'Procesa cada fila y guarda el resultado en casos/<nivel>/<creador>/',
-      labelFile: 'Archivo CSV ( [col #1: dirección del repo],[col #2: creador del repo] )',
-      labelKey: 'API Key de Claude',
-      labelWorkspace: 'Workspace ID',
-      labelModel: 'Modelo',
-      button: 'Analizar lista',
-      resultLabel: 'Resumen del lote',
-      dropDefault: '<strong>Elegí un archivo</strong> o arrastralo acá · .csv con 2 columnas',
-      dropInvalidExt: '<strong>{{name}}</strong> · formato no válido',
-      dropInvalidFormat: '<strong>{{name}}</strong> · formato inesperado',
-      dropValid: '<strong>{{name}}</strong> · {{rows}} direcciones',
-      errorExt: 'El archivo debe tener extensión .csv',
-      errorFormat: 'No se detectaron dos columnas válidas (dirección, nombre)',
-      hintRows: '{{rows}} fila(s) detectada(s)'
+    confirmSend: {
+      title: 'Confirmá antes de enviar a la API',
+      repoLabel: 'Repo',
+      wordsLabel: 'Tamaño del prompt',
+      wordsValue: '{{words}} palabras (~{{chars}} caracteres)',
+      tokensLabel: 'Tokens estimados (entrada)',
+      tokensValue: '~{{tokens}} tokens · modelo {{model}}',
+      continueButton: 'Continuar y enviar',
+      stopButton: 'Detener'
     },
     footer: {
       left: 'Sonda · Frontend Agente Evaluador · TP UCEMA MBA 2026 ··· Grupo: Navarro-Peron-Pires-Serrizuela '
@@ -1403,20 +1332,12 @@ sale de sumar los niveles asignados en cada dimensión.
     document.getElementById('heroEyebrow').textContent = TEXTS.hero.eyebrow;
 
     document.getElementById('step1Label').textContent = TEXTS.step1.label;
-    document.getElementById('tile1aTag').textContent = TEXTS.step1.tileA.tag;
-    document.getElementById('tile1aTitle').textContent = TEXTS.step1.tileA.title;
-    document.getElementById('tile1aDesc').textContent = TEXTS.step1.tileA.desc;
-    document.getElementById('tile1bTag').textContent = TEXTS.step1.tileB.tag;
-    document.getElementById('tile1bTitle').textContent = TEXTS.step1.tileB.title;
-    document.getElementById('tile1bDesc').textContent = TEXTS.step1.tileB.desc;
-
-    document.getElementById('step2Label').textContent = TEXTS.step2.label;
-    document.getElementById('tile1aaTag').textContent = TEXTS.step2.tileAA.tag;
-    document.getElementById('tile1aaTitle').textContent = TEXTS.step2.tileAA.title;
-    document.getElementById('tile1aaDesc').textContent = TEXTS.step2.tileAA.desc;
-    document.getElementById('tile1abTag').textContent = TEXTS.step2.tileAB.tag;
-    document.getElementById('tile1abTitle').textContent = TEXTS.step2.tileAB.title;
-    document.getElementById('tile1abDesc').textContent = TEXTS.step2.tileAB.desc;
+    document.getElementById('tileATag').textContent = TEXTS.step1.tileA.tag;
+    document.getElementById('tileATitle').textContent = TEXTS.step1.tileA.title;
+    document.getElementById('tileADesc').textContent = TEXTS.step1.tileA.desc;
+    document.getElementById('tileBTag').textContent = TEXTS.step1.tileB.tag;
+    document.getElementById('tileBTitle').textContent = TEXTS.step1.tileB.title;
+    document.getElementById('tileBDesc').textContent = TEXTS.step1.tileB.desc;
 
     document.getElementById('panelAATitle').textContent = TEXTS.panelAA.title;
     document.getElementById('panelAANote').textContent = TEXTS.panelAA.note;
@@ -1442,22 +1363,16 @@ sale de sumar los niveles asignados en cada dimensión.
     document.getElementById('ab-copy-flag').textContent = TEXTS.panelAB.copyFlag;
     document.getElementById('abResultHint').textContent = TEXTS.panelAB.resultHint;
 
-    document.getElementById('panelBTitle').textContent = TEXTS.panelB.title;
-    document.getElementById('panelBNote').textContent = TEXTS.panelB.note;
-    document.getElementById('labelBFile').textContent = TEXTS.panelB.labelFile;
-    document.getElementById('labelBKey').textContent = TEXTS.panelB.labelKey;
-    document.getElementById('labelBWs').textContent = TEXTS.panelB.labelWorkspace;
-    document.getElementById('b-key').placeholder = TEXTS.common.placeholderKey;
-    document.getElementById('b-ws').placeholder = TEXTS.common.placeholderWorkspace;
-    document.getElementById('b-filedrop-text').innerHTML = TEXTS.panelB.dropDefault;
-    document.getElementById('labelBModel').textContent = TEXTS.panelB.labelModel;
-    document.getElementById('btn-b').textContent = TEXTS.panelB.button;
-    document.getElementById('bResultLabel').textContent = TEXTS.panelB.resultLabel;
+    document.getElementById('confirmTitle').textContent = TEXTS.confirmSend.title;
+    document.getElementById('confirmRepoLabel').textContent = TEXTS.confirmSend.repoLabel;
+    document.getElementById('confirmWordsLabel').textContent = TEXTS.confirmSend.wordsLabel;
+    document.getElementById('confirmTokensLabel').textContent = TEXTS.confirmSend.tokensLabel;
+    document.getElementById('btn-confirm-stop').textContent = TEXTS.confirmSend.stopButton;
+    document.getElementById('btn-confirm-continue').textContent = TEXTS.confirmSend.continueButton;
 
     renderStepsList(document.getElementById('aa-steps'));
-    renderStepsList(document.getElementById('b-steps'));
 
-    ['aa', 'b'].forEach(function(prefix){
+    ['aa'].forEach(function(prefix){
       document.getElementById(prefix + 'ErrStepLabel').textContent = TEXTS.errorPanel.stepLabel;
       document.getElementById(prefix + 'ErrTimeLabel').textContent = TEXTS.errorPanel.timeLabel;
       document.getElementById(prefix + 'ErrMsgLabel').textContent = TEXTS.errorPanel.messageLabel;
@@ -1465,18 +1380,14 @@ sale de sumar los niveles asignados en cada dimensión.
     });
   }
 
-  var state = { path1: null, path2: null };
+  var state = { path: null };
 
   var el = {
     breadcrumb: document.getElementById('breadcrumb'),
-    step2: document.getElementById('step2'),
-    tile1a: document.getElementById('tile-1a'),
-    tile1b: document.getElementById('tile-1b'),
-    tile1aa: document.getElementById('tile-1aa'),
-    tile1ab: document.getElementById('tile-1ab'),
+    tileA: document.getElementById('tile-a'),
+    tileB: document.getElementById('tile-b'),
     panelAA: document.getElementById('panel-1aa'),
     panelAB: document.getElementById('panel-1ab'),
-    panelB: document.getElementById('panel-1b'),
     heroTitle: document.getElementById('heroTitle'),
     heroSub: document.getElementById('heroSub')
   };
@@ -1487,22 +1398,11 @@ sale de sumar los niveles asignados en cada dimensión.
     span.textContent = text;
     return span;
   }
-  function sep(){
-    var s = document.createElement('span');
-    s.className = 'crumb-sep';
-    s.textContent = '›';
-    return s;
-  }
-
   function renderBreadcrumb(){
     el.breadcrumb.innerHTML = '';
-    if(!state.path1){ return; }
+    if(!state.path){ return; }
     var prefix = TEXTS.breadcrumb.prefix;
-    el.breadcrumb.appendChild(crumb(prefix + ' 1' + state.path1, state.path1 === 'B'));
-    if(state.path1 === 'A' && state.path2){
-      el.breadcrumb.appendChild(sep());
-      el.breadcrumb.appendChild(crumb(prefix + ' 1A-' + state.path2, true));
-    }
+    el.breadcrumb.appendChild(crumb(prefix + ' ' + state.path, true));
     var resetBtn = document.createElement('button');
     resetBtn.type = 'button';
     resetBtn.className = 'btn-reset';
@@ -1512,21 +1412,15 @@ sale de sumar los niveles asignados en cada dimensión.
   }
 
   function render(){
-    el.tile1a.classList.toggle('is-active', state.path1 === 'A');
-    el.tile1b.classList.toggle('is-active', state.path1 === 'B');
-    el.step2.hidden = state.path1 !== 'A';
-    el.tile1aa.classList.toggle('is-active', state.path2 === 'A');
-    el.tile1ab.classList.toggle('is-active', state.path2 === 'B');
+    el.tileA.classList.toggle('is-active', state.path === 'A');
+    el.tileB.classList.toggle('is-active', state.path === 'B');
 
-    el.panelAA.hidden = !(state.path1 === 'A' && state.path2 === 'A');
-    el.panelAB.hidden = !(state.path1 === 'A' && state.path2 === 'B');
-    el.panelB.hidden = state.path1 !== 'B';
+    el.panelAA.hidden = state.path !== 'A';
+    el.panelAB.hidden = state.path !== 'B';
 
     var h = TEXTS.hero.start;
-    if(state.path1 === 'A' && !state.path2){ h = TEXTS.hero.chooseMethod; }
-    else if(state.path1 === 'A' && state.path2 === 'A'){ h = TEXTS.hero.apiMode; }
-    else if(state.path1 === 'A' && state.path2 === 'B'){ h = TEXTS.hero.promptMode; }
-    else if(state.path1 === 'B'){ h = TEXTS.hero.listMode; }
+    if(state.path === 'A'){ h = TEXTS.hero.apiMode; }
+    else if(state.path === 'B'){ h = TEXTS.hero.promptMode; }
     el.heroTitle.textContent = h.title;
     el.heroSub.textContent = h.sub;
 
@@ -1534,47 +1428,36 @@ sale de sumar los niveles asignados en cada dimensión.
   }
 
   function reset(){
-    state.path1 = null;
-    state.path2 = null;
-    ['aa-url','aa-name','aa-key','aa-ws','ab-url','b-key','b-ws'].forEach(function(id){
+    state.path = null;
+    ['aa-url','aa-name','aa-key','aa-ws','ab-url'].forEach(function(id){
       var input = document.getElementById(id);
       if(input){ input.value = ''; input.classList.remove('is-valid','is-invalid'); }
     });
-    document.getElementById('b-file').value = '';
-    document.getElementById('b-filedrop').classList.remove('is-valid','is-invalid');
-    document.getElementById('b-filedrop-text').innerHTML = TEXTS.panelB.dropDefault;
-    ['hint-aa-url','hint-aa-name','hint-aa-key','hint-aa-ws','hint-ab-url','hint-b-file','hint-b-key','hint-b-ws'].forEach(function(id){
+    ['hint-aa-url','hint-aa-name','hint-aa-key','hint-aa-ws','hint-ab-url'].forEach(function(id){
       var hEl = document.getElementById(id); if(hEl){ hEl.textContent=''; hEl.className='hint'; }
     });
-    ['status-aa-url','status-aa-name','status-aa-key','status-aa-ws','status-ab-url','status-b-file','status-b-key','status-b-ws'].forEach(function(id){
+    ['status-aa-url','status-aa-name','status-aa-key','status-aa-ws','status-ab-url'].forEach(function(id){
       var s = document.getElementById(id); if(s){ s.textContent=''; s.className='field-status'; }
     });
     document.getElementById('btn-aa').disabled = true;
-    document.getElementById('btn-b').disabled = true;
     document.getElementById('btn-ab-create').disabled = true;
     document.getElementById('btn-ab-copy').disabled = true;
     document.getElementById('ab-result').hidden = true;
     document.getElementById('ab-prompt').value = '';
-    ['aa-status','ab-status','b-status'].forEach(function(id){ document.getElementById(id).textContent = ''; });
+    ['aa-status','ab-status'].forEach(function(id){ document.getElementById(id).textContent = ''; });
     document.getElementById('aa-result').hidden = true;
     document.getElementById('aa-output').value = '';
-    document.getElementById('b-result').hidden = true;
-    document.getElementById('b-output').value = '';
-    ['aa-steps','b-steps'].forEach(function(id){
+    ['aa-steps'].forEach(function(id){
       var listEl = document.getElementById(id);
       listEl.hidden = true;
       listEl.querySelectorAll('li').forEach(function(li){ li.classList.remove('is-active','is-done','is-error'); });
     });
     document.getElementById('aa-error').hidden = true;
-    document.getElementById('b-error').hidden = true;
-    csvState = { ok: false, rows: [] };
     render();
   }
 
-  el.tile1a.addEventListener('click', function(){ state.path1 = 'A'; state.path2 = null; render(); });
-  el.tile1b.addEventListener('click', function(){ state.path1 = 'B'; state.path2 = null; render(); });
-  el.tile1aa.addEventListener('click', function(){ state.path2 = 'A'; render(); });
-  el.tile1ab.addEventListener('click', function(){ state.path2 = 'B'; render(); });
+  el.tileA.addEventListener('click', function(){ state.path = 'A'; render(); });
+  el.tileB.addEventListener('click', function(){ state.path = 'B'; render(); });
 
   /* ============================================================
      LÓGICA DEL EVALUADOR — leer repos de GitHub, armar el prompt,
@@ -1670,6 +1553,44 @@ sale de sumar los niveles asignados en cada dimensión.
     return { prompt: prompt, branch: treeInfo.branch, blobs: treeInfo.blobs };
   }
 
+  function estimateTokenCount(text){
+    return Math.round(text.length / 4);
+  }
+  function countWords(text){
+    var trimmed = text.trim();
+    return trimmed ? trimmed.split(/\s+/).length : 0;
+  }
+
+  /* ---------- modal de confirmación antes de enviar a la API (Opción A) ---------- */
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmRepoValue = document.getElementById('confirmRepoValue');
+  var confirmWordsValue = document.getElementById('confirmWordsValue');
+  var confirmTokensValue = document.getElementById('confirmTokensValue');
+  var btnConfirmStop = document.getElementById('btn-confirm-stop');
+  var btnConfirmContinue = document.getElementById('btn-confirm-continue');
+  var confirmResolve = null;
+
+  function confirmBeforeSending(repoLabel, promptText, model){
+    var words = countWords(promptText);
+    var tokens = estimateTokenCount(promptText);
+    confirmRepoValue.textContent = repoLabel;
+    confirmWordsValue.textContent = fill(TEXTS.confirmSend.wordsValue,
+      { words: words.toLocaleString('es-AR'), chars: promptText.length.toLocaleString('es-AR') });
+    confirmTokensValue.textContent = fill(TEXTS.confirmSend.tokensValue,
+      { tokens: tokens.toLocaleString('es-AR'), model: model });
+    confirmOverlay.hidden = false;
+    btnConfirmContinue.focus();
+    return new Promise(function(resolve){ confirmResolve = resolve; });
+  }
+  btnConfirmContinue.addEventListener('click', function(){
+    confirmOverlay.hidden = true;
+    if (confirmResolve) { confirmResolve('continue'); confirmResolve = null; }
+  });
+  btnConfirmStop.addEventListener('click', function(){
+    confirmOverlay.hidden = true;
+    if (confirmResolve) { confirmResolve('stop'); confirmResolve = null; }
+  });
+
   async function callClaudeAPI(prompt, apiKey, model, workspaceId, onStatus){
     var headers = {
       'Content-Type': 'application/json',
@@ -1681,7 +1602,7 @@ sale de sumar los niveles asignados en cada dimensión.
     var body = JSON.stringify({ model: model, max_tokens: 40000, stream: true, messages: [{ role: 'user', content: prompt }] });
 
     var promptChars = prompt.length;
-    var estTokens = Math.round(promptChars / 4);
+    var estTokens = estimateTokenCount(prompt);
     var kb = (new Blob([body]).size / 1024).toFixed(1);
     if (onStatus) onStatus('Armando la solicitud — ' + promptChars.toLocaleString('es-AR') + ' caracteres (~' + estTokens.toLocaleString('es-AR') + ' tokens estimados, ' + kb + ' KB) para ' + model + '...');
 
@@ -1894,7 +1815,7 @@ sale de sumar los niveles asignados en cada dimensión.
     }
   }
 
-  /* ---------- pipeline por repo, compartido entre 1A-A y 1B ---------- */
+  /* ---------- pipeline por repo, usado por el panel de API (Opción A) ---------- */
   async function evaluateAndFile(opts){
     var onStep = opts.onStep || function(){};
     if (opts.onStatus) opts.onStatus('Elegí la carpeta raíz del repo del agente evaluador (la que contiene "casos/") — el navegador solo va a pedirlo una vez por sesión.');
@@ -1902,6 +1823,13 @@ sale de sumar los niveles asignados en cada dimensión.
 
     onStep('build');
     var built = await buildFullPrompt(opts.owner, opts.repo, opts.onStatus);
+
+    var decision = await confirmBeforeSending(opts.owner + '/' + opts.repo, built.prompt, opts.model);
+    if (decision === 'stop') {
+      var cancelErr = new Error('Envío cancelado por el usuario antes de llamar a la API.');
+      cancelErr.userCancelled = true;
+      throw cancelErr;
+    }
 
     onStep('send');
     var result;
@@ -2036,6 +1964,13 @@ sale de sumar los niveles asignados en cada dimensión.
       btnAA.textContent = TEXTS.common.buttonDone;
       setTimeout(function(){ btnAA.textContent = original; checkAA(); }, 1600);
     } catch (err) {
+      if (err.userCancelled) {
+        aaSteps.hide();
+        aaStatus.textContent = '';
+        btnAA.textContent = original;
+        checkAA();
+        return;
+      }
       aaSteps.errorAtCurrent();
       showErrorPanel('aa', aaSteps.getCurrent(), err);
       if (err.rawText) {
@@ -2108,139 +2043,6 @@ sale de sumar los niveles asignados en cada dimensión.
       try{ document.execCommand('copy'); flag(); }catch(e){}
       abPrompt.setAttribute('readonly', 'readonly');
     }
-  });
-
-  /* ---------- panel 1B ---------- */
-  var bFileInput = document.getElementById('b-file');
-  var bFileDrop = document.getElementById('b-filedrop');
-  var bFileDropText = document.getElementById('b-filedrop-text');
-  var bKey = document.getElementById('b-key');
-  var bWs = document.getElementById('b-ws');
-  var bModel = document.getElementById('b-model');
-  var btnB = document.getElementById('btn-b');
-  var bStatus = document.getElementById('b-status');
-  var bResult = document.getElementById('b-result');
-  var bOutput = document.getElementById('b-output');
-  var bSteps = makeStepTracker(document.getElementById('b-steps'));
-  var csvState = { ok: false, rows: [] };
-
-  bModel.value = storageGet('sonda_model') || 'claude-opus-5';
-  bModel.addEventListener('change', function(){ storageSet('sonda_model', bModel.value); });
-
-  bFileDrop.addEventListener('click', function(){ bFileInput.click(); });
-  bFileDrop.addEventListener('keydown', function(e){
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); bFileInput.click(); }
-  });
-
-  function parseCsv(text){
-    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim() !== ''; });
-    if(lines.length === 0) return { ok: false, rows: 0, parsed: [] };
-    var validLines = lines.filter(function(l){
-      var cols = l.split(/[,;\t]/);
-      return cols.length >= 2 && cols[0].trim() !== '' && cols[1].trim() !== '';
-    });
-    var ratio = validLines.length / lines.length;
-    var parsed = validLines.map(function(l){
-      var cols = l.split(/[,;\t]/);
-      return { url: cols[0].trim(), creador: cols[1].trim() };
-    });
-    return { ok: ratio >= 0.8 && validLines.length >= 1, rows: validLines.length, parsed: parsed };
-  }
-
-  function checkB(){
-    var ok2 = setField(bKey, document.getElementById('status-b-key'), document.getElementById('hint-b-key'),
-      isValidKey(bKey.value), '', TEXTS.common.errorKey);
-    var ok3 = setField(bWs, document.getElementById('status-b-ws'), document.getElementById('hint-b-ws'),
-      isValidWorkspace(bWs.value), '', TEXTS.common.errorWorkspace);
-    btnB.disabled = !(csvState.ok && ok2 && ok3);
-  }
-  [bKey, bWs].forEach(function(i){ i.addEventListener('input', checkB); });
-
-  bFileInput.addEventListener('change', function(){
-    var file = bFileInput.files[0];
-    var statusEl = document.getElementById('status-b-file');
-    var hintEl = document.getElementById('hint-b-file');
-    if(!file){ return; }
-    var isCsvExt = /\.csv$/i.test(file.name);
-    if(!isCsvExt){
-      csvState = { ok: false, rows: [] };
-      bFileDrop.classList.add('is-invalid'); bFileDrop.classList.remove('is-valid');
-      statusEl.textContent = TEXTS.common.statusInvalid; statusEl.className = 'field-status err';
-      hintEl.textContent = TEXTS.panelB.errorExt; hintEl.className = 'hint hint-err';
-      bFileDropText.innerHTML = fill(TEXTS.panelB.dropInvalidExt, { name: file.name });
-      checkB();
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(){
-      var parsed = parseCsv(String(reader.result));
-      csvState = { ok: parsed.ok, rows: parsed.parsed || [] };
-      if(parsed.ok){
-        bFileDrop.classList.add('is-valid'); bFileDrop.classList.remove('is-invalid');
-        statusEl.textContent = TEXTS.common.statusValid; statusEl.className = 'field-status ok';
-        hintEl.textContent = fill(TEXTS.panelB.hintRows, { rows: parsed.rows }); hintEl.className = 'hint hint-ok';
-        bFileDropText.innerHTML = fill(TEXTS.panelB.dropValid, { name: file.name, rows: parsed.rows });
-      } else {
-        bFileDrop.classList.add('is-invalid'); bFileDrop.classList.remove('is-valid');
-        statusEl.textContent = TEXTS.common.statusInvalid; statusEl.className = 'field-status err';
-        hintEl.textContent = TEXTS.panelB.errorFormat; hintEl.className = 'hint hint-err';
-        bFileDropText.innerHTML = fill(TEXTS.panelB.dropInvalidFormat, { name: file.name });
-      }
-      checkB();
-    };
-    reader.readAsText(file);
-  });
-
-  btnB.addEventListener('click', async function(){
-    var original = TEXTS.panelB.button;
-    var rows = csvState.rows || [];
-    btnB.textContent = TEXTS.common.buttonBusy;
-    btnB.disabled = true;
-    bResult.hidden = true;
-    hideErrorPanel('b');
-
-    var results = [];
-    bSteps.show();
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      bSteps.reset();
-      bStatus.textContent = 'Procesando ' + (i + 1) + '/' + rows.length + ': ' + row.creador + '...';
-      var parsed = parseRepoUrl(row.url);
-      if (!parsed) {
-        results.push({ creador: row.creador, url: row.url, ok: false, error: 'URL no es un repo de GitHub válido' });
-        continue;
-      }
-      try {
-        var res = await evaluateAndFile({
-          owner: parsed.owner, repo: parsed.repo,
-          creador: row.creador, apiKey: bKey.value.trim(),
-          model: bModel.value, workspaceId: bWs.value.trim(),
-          onStatus: function(msg){ bStatus.textContent = 'Procesando ' + (i + 1) + '/' + rows.length + ': ' + row.creador + ' — ' + msg; },
-          onStep: function(key){ bSteps.activate(key); },
-        });
-        bSteps.finishAll();
-        results.push({ creador: row.creador, url: row.url, ok: true, nivel: res.nivel, folder: res.folder });
-      } catch (err) {
-        bSteps.errorAtCurrent();
-        showErrorPanel('b', bSteps.getCurrent(), err);
-        results.push({ creador: row.creador, url: row.url, ok: false, error: err.message, rawText: err.rawText });
-      }
-    }
-
-    var lines = ['| Creador | Nivel | Resultado |', '|---|---|---|'];
-    results.forEach(function(r){
-      lines.push('| ' + r.creador + ' | ' + (r.ok ? r.nivel : '—') + ' | ' + (r.ok ? 'Guardado en ' + r.folder : 'Error: ' + r.error) + ' |');
-    });
-    var rawSections = results.filter(function(r){ return r.rawText; }).map(function(r){
-      return '\n\n---\n\n### Respuesta cruda sin clasificar — ' + r.creador + '\n\n' + r.rawText;
-    });
-    bOutput.value = lines.join('\n') + rawSections.join('');
-    bResult.hidden = false;
-    var okCount = results.filter(function(r){ return r.ok; }).length;
-    bStatus.textContent = 'Listo — ' + okCount + '/' + results.length + ' repos evaluados sin error.';
-
-    btnB.textContent = TEXTS.common.buttonDone;
-    setTimeout(function(){ btnB.textContent = original; checkB(); }, 1600);
   });
 
   applyTexts();
